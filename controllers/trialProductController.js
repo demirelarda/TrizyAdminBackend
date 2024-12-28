@@ -24,7 +24,7 @@ exports.addTrialProduct = [
         category
       )
 
-      const imageURLs = await uploadImagesToS3(req.files, 'trial-products')
+      const imageURLs = await uploadImagesToS3(req.files, 'products')
 
       const newTrialProduct = new TrialProduct({
         imageURLs,
