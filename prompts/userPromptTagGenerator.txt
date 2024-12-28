@@ -1,4 +1,3 @@
 Title: {title}
 Description: {description}
-Price: {price}
 Category: {category}

@@ -12,6 +12,7 @@ dotenv.config()
 const dealsRoute = require('./routes/deals')
 const categoryRoute = require('./routes/categories')
 const productsRoute = require('./routes/products')
+const trialProductRoute = require('./routes/trialProducts')
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("Connected to the MongoDB")).catch((err) => { console.log(err) })
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/api/deals', dealsRoute)
 app.use('/api/categories', categoryRoute)
 app.use('/api/products', productsRoute)
+app.use('/api/trialProducts', trialProductRoute)
 
 
 const PORT = process.env.PORT || 3000
