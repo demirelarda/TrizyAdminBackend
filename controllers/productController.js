@@ -120,3 +120,31 @@ exports.addProduct = [
     }
   },
 ]
+
+
+exports.getAllProducts = async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query
+        const skip = (page - 1) * limit
+
+        const products = await Product.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit))
+
+        const totalProducts = await Product.countDocuments()
+
+        res.status(200).json({
+            success: true,
+            data: products,
+            pagination: {
+                total: totalProducts,
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(totalProducts / limit),
+                limit: parseInt(limit),
+            },
+        })
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message })
+    }
+}
