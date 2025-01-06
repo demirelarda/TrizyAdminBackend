@@ -17,6 +17,10 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    salePrice: {
+        type: Number,
+        default: null
+    },
     stockCount: {
         type: Number,
         required: true,
@@ -34,6 +38,21 @@ const ProductSchema = new mongoose.Schema({
     cargoWeight: {
         type: Number,
         required: true
+    },
+    reviewCount: {
+        type: Number,
+        required: true,
+        default: 0 
+    },
+    likeCount: {
+        type: Number,
+        required: true,
+        default: 0 
+    },
+    averageRating: {
+        type: Number,
+        required: true,
+        default: 0 
     }
 }, { timestamps: true })
 

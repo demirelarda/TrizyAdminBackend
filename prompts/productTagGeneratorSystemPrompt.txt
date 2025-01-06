@@ -22,7 +22,7 @@ Rules for Tag Generation:
 Derive tags from the title by identifying key attributes or keywords.
 Use the description to extract relevant features such as material, size, color, functionality, etc.
 Utilize the category to generate broader or hierarchical tags relevant to the product.
-
+Try NOT to use dashes or hyphens or any special characters in the tags.
 
 Output Restrictions:
 The response must include only the JSON object specified above, with no additional text or explanation. Maximum tag count is 50.

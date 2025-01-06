@@ -8,9 +8,9 @@ const upload = multer({ storage })
 
 exports.addProduct = [
   upload.array('images', 5),
-async (req, res) => {
+  async (req, res) => {
     try {
-      const { title, description, price, category, stockCount, cargoWeight } = req.body
+      const { title, description, price, salePrice, category, stockCount, cargoWeight } = req.body
 
       if (!title || !description || !price || !category || !cargoWeight) {
         return res.status(400).json({
@@ -23,11 +23,19 @@ async (req, res) => {
 
       const imageURLs = await uploadImagesToS3(req.files, 'products')
 
+      if (salePrice && parseFloat(salePrice) >= parseFloat(price)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Sale price must be less than the regular price.',
+        })
+      }
+
       const newProduct = new Product({
         imageURLs,
         title,
         description,
         price,
+        salePrice: salePrice ? parseFloat(salePrice) : null,
         stockCount: stockCount || 0,
         category,
         tags,
