@@ -14,6 +14,8 @@ const categoryRoute = require('./routes/categories')
 const productsRoute = require('./routes/products')
 const trialProductRoute = require('./routes/trialProducts')
 const ordersRoute = require('./routes/order')
+const dashboardRoute = require('./routes/dashboad')
+const customersRoute = require('./routes/customers')
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("Connected to the MongoDB")).catch((err) => { console.log(err) })
@@ -27,6 +29,8 @@ app.use('/api/categories', categoryRoute)
 app.use('/api/products', productsRoute)
 app.use('/api/trialProducts', trialProductRoute)
 app.use('/api/orders', ordersRoute)
+app.use('/api/dashboardData', dashboardRoute)
+app.use('/api/customers', customersRoute)
 
 
 const PORT = process.env.PORT || 3000

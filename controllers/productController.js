@@ -1,4 +1,5 @@
 const Product = require('../models/Product')
+const TrialProduct = require('../models/TrialProduct')
 const multer = require('multer')
 const { uploadImagesToS3 } = require('../utils/uploadImages')
 const { generateTags } = require('../ai/aiTagGenerator')
@@ -23,6 +24,10 @@ exports.addProduct = [
 
       const imageURLs = await uploadImagesToS3(req.files, 'products')
 
+      let finalPrice
+      let finalOldPrice = null
+      let finalSalePrice = null
+
       if (salePrice && parseFloat(salePrice) >= parseFloat(price)) {
         return res.status(400).json({
           success: false,
@@ -30,12 +35,21 @@ exports.addProduct = [
         })
       }
 
+      if (salePrice) {
+        finalPrice = parseFloat(salePrice)
+        finalOldPrice = parseFloat(price)
+        finalSalePrice = parseFloat(salePrice)
+      } else {
+        finalPrice = parseFloat(price)
+      }
+
       const newProduct = new Product({
         imageURLs,
         title,
         description,
-        price,
-        salePrice: salePrice ? parseFloat(salePrice) : null,
+        price: finalPrice,
+        oldPrice: finalOldPrice,
+        salePrice: finalSalePrice,
         stockCount: stockCount || 0,
         category,
         tags,
@@ -62,6 +76,53 @@ exports.addProduct = [
       res.status(500).json({
         success: false,
         message: 'Failed to add product',
+        error: error.message,
+      })
+    }
+  },
+]
+
+
+exports.addTrialProduct = [
+  upload.array('images', 5),
+  async (req, res) => {
+    try {
+      const { title, description, trialPeriod, category, availableCount } = req.body
+
+      if (!title || !description || !category || !availableCount) {
+        return res.status(400).json({
+          success: false,
+          message: 'Title, description, category, and availableCount are required.',
+        })
+      }
+
+      const tags = await generateTags(title, description, category)
+
+      const imageURLs = await uploadImagesToS3(req.files, 'products')
+
+      const newTrialProduct = new TrialProduct({
+        imageURLs,
+        title,
+        description,
+        trialPeriod: trialPeriod || 30,
+        availableCount: parseInt(availableCount),
+        category,
+        tags,
+      })
+
+      await newTrialProduct.save()
+
+      res.status(201).json({
+        success: true,
+        message: 'Trial product created successfully',
+        trialProduct: newTrialProduct,
+      })
+    } catch (error) {
+      console.error('Error adding trial product:', error)
+
+      res.status(500).json({
+        success: false,
+        message: 'Failed to add trial product',
         error: error.message,
       })
     }
